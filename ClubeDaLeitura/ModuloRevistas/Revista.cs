@@ -8,5 +8,12 @@ namespace ClubeDaLeitura.ModuloRevistas
 {
     internal class Revista
     {
+        public string Titulo { get; set; }
+        public int NumEdicaoDoAnoDePublicacao { get; set; }
+        public string StatusDeEmprestimoECaixa { get; set; }
+        public void Validar() { }
+        public void Emprestar() { }
+        public void Devolver() { }
+        public void Reservar() { }
     }
 }

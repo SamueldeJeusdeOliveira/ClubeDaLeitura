@@ -8,5 +8,11 @@ namespace ClubeDaLeitura.ModuloRevistas
 {
     internal class RepositorioRevista
     {
+        public Revista[] VetorDeRevistas;
+        public void Inserir() { }
+        public void Editar() { }
+        public void Excluir() { }
+        public void SelecionarTodos() { }
+        public void SelecionarPorId() { }
     }
 }
