@@ -8,5 +8,10 @@ namespace ClubeDaLeitura.ModuloCaixas
 {
     internal class TelaCaixa
     {
+        public RepositorioCaixa repositorioCaixa { get; set; }
+        public void Inserir() { }
+        public void Editar() { }
+        public void Excluir() { }
+        public void VisualizarTodos() { }
     }
 }
