@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ClubeDaLeitura.Compartilhado;
 
 namespace ClubeDaLeitura.ModuloRevistas
 {
-    internal class RepositorioRevista
+    internal class RepositorioRevista : RepositorioBase
     {
         public Revista[] VetorDeRevistas;
         public void Inserir() { }

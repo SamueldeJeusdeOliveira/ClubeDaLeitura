@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ClubeDaLeitura.Compartilhado;
 
 namespace ClubeDaLeitura.ModuloCaixas
 {
-    internal class RepositorioCaixa
+    internal class RepositorioCaixa : RepositorioBase
     {
         public Caixa[] VetorDeCaixa { get; set; }
         public void Inserir() { }
