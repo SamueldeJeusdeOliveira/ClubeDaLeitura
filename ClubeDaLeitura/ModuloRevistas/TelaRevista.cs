@@ -8,12 +8,12 @@ using ClubeDaLeitura.ModuloCaixas;
 
 namespace ClubeDaLeitura.ModuloRevistas
 {
-    internal class TelaReevista : TelaBase
+    internal class TelaRevista : TelaBase
     {
         public RepositorioRevista repositorioRevista;
         public RepositorioCaixa repositorioCaixa;
 
-        public TelaReevista(string nomeEntidade, RepositorioBase repositorio) : base(nomeEntidade, repositorio)
+        public TelaRevista(string nomeEntidade, RepositorioBase repositorio) : base(nomeEntidade, repositorio)
         {
         }
 

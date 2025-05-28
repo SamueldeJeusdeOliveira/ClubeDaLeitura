@@ -26,8 +26,6 @@ namespace ClubeDaLeitura.ModuloRevistas
             if (string.IsNullOrWhiteSpace(StatusDeEmprestimoECaixa))
                 erros += "O telefone é obrigatório!\n";
 
-            else if (NumEdicaoDoAnoDePublicacao.Length < 9)
-                erros += "O telefone deve conter no mínimo 9 caracteres!\n";
 
             return erros;
         }

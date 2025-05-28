@@ -12,7 +12,6 @@ namespace ClubeDaLeitura.ModuloAmigos
         public string Nome { get; set; }
         public string Responsavel { get; set; }
         public string Telefone { get; set; }
-        public void Validar() { }
         public void ObterEmprestimos() { }
 
         public override void AtualizarRegistro(EntidadeBase registroAtualizado)

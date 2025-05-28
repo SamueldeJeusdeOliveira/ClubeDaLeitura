@@ -16,7 +16,6 @@ namespace ClubeDaLeitura.ModuloEmprestimos
         public DateTime Data {  get; set; }
         public string Situacao {  get; set; }
 
-        public void Validar() { }
         public void ObterDataDevolucao() { }
         public void RegistrarDevolucao() { }
 
