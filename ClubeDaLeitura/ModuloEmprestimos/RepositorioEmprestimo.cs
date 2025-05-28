@@ -8,5 +8,11 @@ namespace ClubeDaLeitura.ModuloEmprestimos
 {
     internal class RepositorioEmprestimo
     {
+        public Emprestimo[] VetorEmprestimo { get; set; }
+        public void Inserir() { }
+        public void Editar() { }
+        public void Excluir() { }
+        public void SelecionarTodos() { }
+        public void SelecionarPorId() { }
     }
 }
