@@ -8,5 +8,12 @@ namespace ClubeDaLeitura.ModuloAmigos
 {
     internal class TelaAmigo
     {
+        RepositorioAmigo repositorioAmigo;
+
+        public void Inserir() { }
+        public void Editar() { }
+        public void Excluir() { }
+        public void VisualizarTodos() { }
+        public void VisualizarEmprestimos() { }
     }
 }
