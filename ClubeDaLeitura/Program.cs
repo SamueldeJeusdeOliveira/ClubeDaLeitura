@@ -10,6 +10,7 @@ public class Program
 
         while (true)
         {
+            Console.ForegroundColor = ConsoleColor.Yellow;
             telaPrincipal.ApresentarMenuPrincipal();
 
             TelaBase telaEscolhida = telaPrincipal.ObterTela();

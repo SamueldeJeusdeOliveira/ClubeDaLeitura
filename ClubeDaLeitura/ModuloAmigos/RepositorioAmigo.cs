@@ -9,11 +9,6 @@ namespace ClubeDaLeitura.ModuloAmigos
 {
     internal class RepositorioAmigo : RepositorioBase
     {
-        public Amigo[] VetorAmigo;
-        public void Inserir() { }
-        public void Editar() { }
-        public void Excluir() { }
-        public void SelecionarTodos() { }
-        public void SelecionarPorId() { }
+        
     }
 }

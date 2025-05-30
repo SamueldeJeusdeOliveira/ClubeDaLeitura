@@ -20,17 +20,16 @@ namespace ClubeDaLeitura.Compartilhado
         public char ApresentarMenu()
         {
             ExibirCabecalho();
-
-            Console.WriteLine($"1 - Cadastro de {nomeEntidade}");
-            Console.WriteLine($"2 - Visualizar {nomeEntidade}s");
-            Console.WriteLine($"3 - Editar {nomeEntidade}");
-            Console.WriteLine($"4 - Excluir {nomeEntidade}");
-            Console.WriteLine($"S - Sair");
+            Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------------------------");
+            Console.WriteLine($"|  1 - Cadastro de {nomeEntidade}   |     2 - Visualizar {nomeEntidade}s    |     3 - Editar {nomeEntidade}    |  4 - Excluir {nomeEntidade}        ");
+            Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------------------------");
+            Console.WriteLine($"\n                                              Pressionar a tecla 'Esc' para sair                                                                           ");
 
             Console.WriteLine();
 
             Console.Write("Digite uma opção válida: ");
-            char opcaoEscolhida = Console.ReadLine().ToUpper()[0];
+            ConsoleKeyInfo tecla = Console.ReadKey();
+            char opcaoEscolhida = tecla.KeyChar;
 
             return opcaoEscolhida;
         }
@@ -38,8 +37,9 @@ namespace ClubeDaLeitura.Compartilhado
         public void CadastrarRegistro()
         {
             ExibirCabecalho();
-
-            Console.WriteLine($"Cadastro de {nomeEntidade}");
+            Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------------------------");
+            Console.WriteLine($"                                                Cadastro de {nomeEntidade}");
+            Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------------------------");
 
             Console.WriteLine();
 
@@ -118,7 +118,7 @@ namespace ClubeDaLeitura.Compartilhado
         protected void ExibirCabecalho()
         {
             Console.Clear();
-            Console.WriteLine($"Gestão de {nomeEntidade}s");
+            Console.WriteLine($"                                                Gestão de {nomeEntidade}s");
             Console.WriteLine();
         }
 
