@@ -17,12 +17,19 @@ namespace ClubeDaLeitura.ModuloCaixas
 
         public override void AtualizarRegistro(EntidadeBase registroAtualizado)
         {
-            throw new NotImplementedException();
+            Caixa caixa = (Caixa)registroAtualizado;
+            this.Etiqueta = caixa.Etiqueta;
+            this.Cor = caixa.Cor;
+            this.DiasDeEmprestimo = caixa.DiasDeEmprestimo;
         }
 
         public override string Validar()
         {
-            throw new NotImplementedException();
+            string erros = "";
+
+            
+
+            return erros;
         }
     }
 }

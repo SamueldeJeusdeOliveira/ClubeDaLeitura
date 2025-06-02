@@ -13,6 +13,14 @@ namespace ClubeDaLeitura.ModuloRevistas
         public string Titulo { get; set; }
         public int NumEdicaoDoAnoDePublicacao { get; set; }
         public string StatusDeEmprestimoECaixa { get; set; }
+
+        public Revista(string titulo, int numEdicaoDoAnoDePublicacao, string statusDeEmprestimoECaixa)
+        {
+            Titulo = titulo;
+            NumEdicaoDoAnoDePublicacao = numEdicaoDoAnoDePublicacao;
+            StatusDeEmprestimoECaixa = statusDeEmprestimoECaixa;
+        }
+
         public override string Validar()
         {
             string erros = "";
