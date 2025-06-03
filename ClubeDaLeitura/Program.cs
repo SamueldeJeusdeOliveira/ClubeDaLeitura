@@ -6,41 +6,65 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        
         TelaPrincipal telaPrincipal = new TelaPrincipal();
-
-        while (true)
+        try
         {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            telaPrincipal.ApresentarMenuPrincipal();
-
-            TelaBase telaEscolhida = telaPrincipal.ObterTela();
-
-            if (telaEscolhida == null)
-                break;
-
-            char opcaoEscolhida = telaEscolhida.ApresentarMenu();
-
-            if (opcaoEscolhida == 'S')
-                break;
-
-            switch (opcaoEscolhida)
+            while (true)
             {
-                case '1':
-                    telaEscolhida.CadastrarRegistro();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                telaPrincipal.ApresentarMenuPrincipal();
+
+                TelaBase telaEscolhida = telaPrincipal.ObterTela();
+
+                if (telaEscolhida == null)
                     break;
 
-                case '2':
-                    telaEscolhida.VisualizarRegistros(true);
+                char opcaoEscolhida = telaEscolhida.ApresentarMenu();
+
+                if (opcaoEscolhida == 'S')
                     break;
 
-                case '3':
-                    telaEscolhida.EditarRegistro();
-                    break;
+                switch (opcaoEscolhida)
+                {
+                    case '1':
+                        telaEscolhida.CadastrarRegistro();
+                        break;
 
-                case '4':
-                    telaEscolhida.ExcluirRegistro();
-                    break;
+                    case '2':
+                        telaEscolhida.VisualizarRegistros(true);
+                        break;
+
+                    case '3':
+                        telaEscolhida.EditarRegistro();
+                        break;
+
+                    case '4':
+                        telaEscolhida.ExcluirRegistro();
+                        break;
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Ocorreu um erro inesperado:");
+            Console.WriteLine(ex.Message);
+
+            Console.ResetColor();
+            Console.WriteLine();
+            Console.WriteLine("Pressione Enter para reiniciar o sistema ou ESC para encerrar.");
+
+            var tecla = Console.ReadKey(true).Key;
+
+            if (tecla == ConsoleKey.Escape)
+            {
+                Console.WriteLine("Encerrando o sistema...");
+                return;
+            }
+
+            Console.Clear();
+            Main(args);
         }
     }
 }

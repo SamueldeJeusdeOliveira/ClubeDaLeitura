@@ -68,7 +68,7 @@ namespace ClubeDaLeitura.ModuloAmigos
             string nome = Console.ReadLine();
             Console.Write("Qual o nome do Responsável dele? ");
             string responsavel = Console.ReadLine();
-            Console.Write("Qual o telefone para contato?(Escreva no formato (xx) xxxx-xxxx ");
+            Console.Write("Qual o telefone para contato?(Escreva no formato (xx) xxxx-xxxx) ");
             string telefone = Console.ReadLine();
             Amigo amigos = new Amigo(nome, responsavel, telefone);
             return amigos;
