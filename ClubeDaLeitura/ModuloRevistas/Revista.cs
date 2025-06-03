@@ -14,6 +14,13 @@ namespace ClubeDaLeitura.ModuloRevistas
         public int NumEdicaoDoAnoDePublicacao { get; set; }
         public string StatusDeEmprestimoECaixa { get; set; }
 
+        public override void AtualizarRegistro(EntidadeBase registroAtualizado)
+        {
+            Revista revista = (Revista)registroAtualizado;
+            this.Titulo = Titulo;
+            this.NumEdicaoDoAnoDePublicacao = NumEdicaoDoAnoDePublicacao;
+            this.StatusDeEmprestimoECaixa = StatusDeEmprestimoECaixa;
+        }
         public Revista(string titulo, int numEdicaoDoAnoDePublicacao, string statusDeEmprestimoECaixa)
         {
             Titulo = titulo;
@@ -26,14 +33,13 @@ namespace ClubeDaLeitura.ModuloRevistas
             string erros = "";
 
             if (string.IsNullOrWhiteSpace(Titulo))
-                erros += "O nome é obrigatório!\n";
+                erros += "O Titulo é obrigatório!\n";
 
-            else if (Titulo.Length < 2)
-                erros += "O nome deve conter mais que 1 caractere!\n";
+            else if (Titulo.Length < 2 && Titulo.Length > 100)
+                erros += "O nome deve conter mais que 1 caractere e no máximo 100!\n";
 
             if (string.IsNullOrWhiteSpace(StatusDeEmprestimoECaixa))
-                erros += "O telefone é obrigatório!\n";
-
+                erros += "O Número da edição é obrigatório!\n";
 
             return erros;
         }
@@ -41,9 +47,6 @@ namespace ClubeDaLeitura.ModuloRevistas
         public void Devolver() { }
         public void Reservar() { }
 
-        public override void AtualizarRegistro(EntidadeBase registroAtualizado)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

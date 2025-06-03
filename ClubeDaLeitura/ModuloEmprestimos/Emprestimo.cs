@@ -16,7 +16,11 @@ namespace ClubeDaLeitura.ModuloEmprestimos
         public DateTime Data {  get; set; }
         public string Situacao {  get; set; }
 
-        public void ObterDataDevolucao() { }
+        public void ObterDataDevolucao() 
+        {
+            
+            
+        }
         public void RegistrarDevolucao() { }
 
         public override void AtualizarRegistro(EntidadeBase registroAtualizado)

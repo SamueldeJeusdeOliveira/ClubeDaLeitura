@@ -9,7 +9,7 @@ namespace ClubeDaLeitura.Compartilhado
     public abstract class RepositorioBase
     {
         private EntidadeBase[] registros = new EntidadeBase[100];
-        private int contadorRegistros = 0;
+        private int contadorRegistros = 1;
 
         public void CadastrarRegistro(EntidadeBase novoRegistro)
         {
