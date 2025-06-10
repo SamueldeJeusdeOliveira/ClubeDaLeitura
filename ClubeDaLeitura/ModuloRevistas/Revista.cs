@@ -5,6 +5,8 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using ClubeDaLeitura.Compartilhado;
+using ClubeDaLeitura.ModuloAmigos;
+using ClubeDaLeitura.ModuloCaixas;
 
 namespace ClubeDaLeitura.ModuloRevistas
 {
@@ -13,6 +15,8 @@ namespace ClubeDaLeitura.ModuloRevistas
         public string Titulo { get; set; }
         public int NumEdicaoDoAnoDePublicacao { get; set; }
         public string StatusDeEmprestimoECaixa { get; set; }
+        public Amigo amigo { get; set; }
+        public Caixa caixa { get; set; }
 
         public override void AtualizarRegistro(EntidadeBase registroAtualizado)
         {

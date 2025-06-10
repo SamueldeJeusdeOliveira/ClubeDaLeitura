@@ -9,19 +9,16 @@ namespace ClubeDaLeitura.ModuloCaixas
 {
     internal class Caixa : EntidadeBase
     {
-        private int cor;
-        private string? diasDeEmprestimo;
-
-        public Caixa(string? etiqueta, int cor, string? diasDeEmprestimo)
-        {
-            Etiqueta = etiqueta;
-            this.cor = cor;
-            this.diasDeEmprestimo = diasDeEmprestimo;
-        }
-
         public string Etiqueta { get; set; }
         public string Cor { get; set; }
         public int DiasDeEmprestimo { get; set; }
+
+        public Caixa(string etiqueta, string cor, int diasDeEmprestimo)
+        {
+            Etiqueta = etiqueta;
+            Cor = cor;
+            DiasDeEmprestimo = diasDeEmprestimo;
+        }
 
         public override void AtualizarRegistro(EntidadeBase registroAtualizado)
         {

@@ -118,10 +118,15 @@ namespace ClubeDaLeitura.ModuloCaixas
             string etiqueta = Console.ReadLine();
 
             Console.Write("Qual a cor da caixa? ");
-            int cor = int.Parse(Console.ReadLine());
+            string cor = Console.ReadLine();
 
             Console.Write("Quantos dias de empréstimo? ");
-            string diasDeEmprestimo = Console.ReadLine();
+            if (!int.TryParse(Console.ReadLine(), out int diasDeEmprestimo))
+            {
+                Console.WriteLine("Número inválido para dias de empréstimo.");
+                Console.ReadLine();
+                return null;
+            }
 
             Caixa caixa = new Caixa(etiqueta, cor, diasDeEmprestimo);
             return caixa;

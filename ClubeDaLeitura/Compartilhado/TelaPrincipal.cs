@@ -36,7 +36,7 @@ namespace ClubeDaLeitura.Compartilhado
             telaAmigo = new TelaAmigo(repositorioAmigo);
             telaCaixa = new TelaCaixa("Caixa", repositorioCaixa);
             telaEmprestimo = new TelaEmprestimo("Empréstimo", repositorioEmprestimo, repositorioAmigo, repositorioRevista);
-            telaRevista = new TelaRevista("Revista", repositorioRevista);
+            telaRevista = new TelaRevista("Revista", repositorioRevista, repositorioCaixa, repositorioAmigo);
         }
 
         public void ApresentarMenuPrincipal()

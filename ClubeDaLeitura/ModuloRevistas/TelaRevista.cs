@@ -13,10 +13,14 @@ namespace ClubeDaLeitura.ModuloRevistas
     {
         public RepositorioRevista repositorioRevista;
         public RepositorioCaixa repositorioCaixa;
+        public RepositorioAmigo repositorioAmigo;
 
-        public TelaRevista(string nomeEntidade, RepositorioBase repositorio) : base(nomeEntidade, repositorio)
+        public TelaRevista(string nomeEntidade, RepositorioBase repositorio, RepositorioCaixa repositorioCaixa, RepositorioAmigo repositorioAmigo)
+           : base(nomeEntidade, repositorio)
         {
-            repositorioRevista = (RepositorioRevista)repositorio;
+            this.repositorioRevista = (RepositorioRevista)repositorio;
+            this.repositorioCaixa = repositorioCaixa;
+            this.repositorioAmigo = repositorioAmigo;
         }
 
         public void Inserir()
@@ -111,29 +115,48 @@ namespace ClubeDaLeitura.ModuloRevistas
             if (exibirCabecalho)
                 ExibirCabecalho();
 
-            Console.WriteLine("Visualização de Revistas");
-            Console.WriteLine();
+            Console.WriteLine("Visualização de Revistas\n");
 
             Console.WriteLine(
-               "{0, -10} | {1, -20} | {2, -20} | {3, -30}",
-               "Id", "Título", "Número da edição", "Status"
+               "{0, -5} | {1, -20} | {2, -15} | {3, -20} | {4, -20}",
+               "Id", "Título", "Nº Edição", "Status", "Caixa"
             );
 
-            EntidadeBase[] revistas = repositorioRevista.SelecionarRegistros();
+            EntidadeBase[] registros = repositorioRevista.SelecionarRegistros();
 
-            for (int i = 0; i < revistas.Length; i++)
+            foreach (EntidadeBase registro in registros)
             {
-                if (revistas[i] == null)
+                if (registro == null)
                     continue;
 
-                Revista a = (Revista)revistas[i];
+                Revista revista = registro as Revista;
+
+                if (revista == null)
+                    continue;
+
+                string nomeCaixa = revista.caixa?.Etiqueta ?? "Sem caixa";
 
                 Console.WriteLine(
-                   "{0, -10} | {1, -20} | {2, -20} | {3, -30}",
-                    a.id, a.Titulo, a.NumEdicaoDoAnoDePublicacao, a.StatusDeEmprestimoECaixa
+                   "{0, -5} | {1, -20} | {2, -15} | {3, -20} | {4, -20}",
+                   revista.id, revista.Titulo, revista.NumEdicaoDoAnoDePublicacao,
+                   revista.StatusDeEmprestimoECaixa, nomeCaixa
                 );
             }
+
             Console.WriteLine();
+            Console.ReadLine();
+        }
+        private void ExibirAmigos()
+        {
+            EntidadeBase[] amigos = repositorioAmigo.SelecionarRegistros();
+
+            foreach (var registro in amigos)
+            {
+                if (registro == null) continue;
+
+                Amigo a = (Amigo)registro;
+                Console.WriteLine($"{a.id} - {a.Nome}");
+            }
         }
 
         protected override EntidadeBase ObterDados()
@@ -142,12 +165,33 @@ namespace ClubeDaLeitura.ModuloRevistas
             string titulo = Console.ReadLine();
 
             Console.Write("Qual o Número da edição do ano de publicação desta revista? ");
-            int numPubli = int.Parse(Console.ReadLine());
+            if (!int.TryParse(Console.ReadLine(), out int numPubli))
+            {
+                Console.WriteLine("Número inválido.");
+                Console.ReadLine();
+                return null;
+            }
 
             Console.Write("Qual o status deste Empréstimo? ");
             string status = Console.ReadLine();
 
+            ExibirAmigos();
+
+            Console.Write("Digite o ID da Caixa onde a revista está armazenada: ");
+            int idCaixa = int.Parse(Console.ReadLine());
+
+            Caixa caixaSelecionada = repositorioCaixa.SelecionarRegistroPorId(idCaixa) as Caixa;
+
+            if (caixaSelecionada == null)
+            {
+                Console.WriteLine("Caixa não encontrada!");
+                Console.ReadLine();
+                return null;
+            }
+
             Revista revista = new Revista(titulo, numPubli, status);
+            revista.caixa = caixaSelecionada;
+
             return revista;
         }
     }

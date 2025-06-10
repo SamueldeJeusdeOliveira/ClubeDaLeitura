@@ -21,11 +21,6 @@ namespace ClubeDaLeitura.ModuloAmigos
             this.repositorioAmigo = repositorioAmigo;
         }
         
-        public void VisualizarTodos(bool exibirCabecalho)
-        {
-            
-        }
-
         public void VisualizarEmprestimos(bool exibirCabecalho) 
         {
             if (!exibirCabecalho) { ExibirCabecalho(); }
