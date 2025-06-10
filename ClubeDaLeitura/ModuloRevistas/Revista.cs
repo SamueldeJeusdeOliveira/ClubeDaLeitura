@@ -12,45 +12,58 @@ namespace ClubeDaLeitura.ModuloRevistas
 {
     internal class Revista : EntidadeBase
     {
-        public string Titulo { get; set; }
-        public int NumEdicaoDoAnoDePublicacao { get; set; }
-        public string StatusDeEmprestimoECaixa { get; set; }
-        public Amigo amigo { get; set; }
-        public Caixa caixa { get; set; }
-
-        public override void AtualizarRegistro(EntidadeBase registroAtualizado)
+        public enum SituacaoEmprestimo
         {
-            Revista revista = (Revista)registroAtualizado;
-            this.Titulo = Titulo;
-            this.NumEdicaoDoAnoDePublicacao = NumEdicaoDoAnoDePublicacao;
-            this.StatusDeEmprestimoECaixa = StatusDeEmprestimoECaixa;
-        }
-        public Revista(string titulo, int numEdicaoDoAnoDePublicacao, string statusDeEmprestimoECaixa)
-        {
-            Titulo = titulo;
-            NumEdicaoDoAnoDePublicacao = numEdicaoDoAnoDePublicacao;
-            StatusDeEmprestimoECaixa = statusDeEmprestimoECaixa;
+            Aberto,
+            Fechado
         }
 
-        public override string Validar()
+        public class Emprestimo : EntidadeBase
         {
-            string erros = "";
+            public Amigo Amigo { get; set; }
+            public Revista Revista { get; set; }
+            public DateTime DataEmprestimo { get; private set; }
+            public DateTime? DataDevolucao { get; private set; }
+            public SituacaoEmprestimo Situacao { get; private set; } = SituacaoEmprestimo.Aberto;
 
-            if (string.IsNullOrWhiteSpace(Titulo))
-                erros += "O Titulo é obrigatório!\n";
+            public Emprestimo(Amigo amigo, Revista revista)
+            {
+                Amigo = amigo;
+                Revista = revista;
+                DataEmprestimo = DateTime.Now;
+            }
 
-            else if (Titulo.Length < 2 && Titulo.Length > 100)
-                erros += "O nome deve conter mais que 1 caractere e no máximo 100!\n";
+            public DateTime ObterDataDevolucao()
+            {
+                return DataEmprestimo.AddDays(Revista.Caixa.DiasEmprestimo);
+            }
 
-            if (string.IsNullOrWhiteSpace(StatusDeEmprestimoECaixa))
-                erros += "O Número da edição é obrigatório!\n";
+            public string Validar()
+            {
+                string resultadoValidacao = "";
 
-            return erros;
+                if (Amigo == null)
+                    resultadoValidacao += "Amigo não pode ser nulo.\n";
+
+                if (Revista == null)
+                    resultadoValidacao += "Revista não pode ser nula.\n";
+
+                if (Revista.Status == StatusRevista.Emprestada)
+                    resultadoValidacao += "Revista já está emprestada.\n";
+
+                return resultadoValidacao;
+            }
+
+            public void RegistrarDevolucao()
+            {
+                DataDevolucao = DateTime.Now;
+                Situacao = SituacaoEmprestimo.Fechado;
+            }
+
+            public override string ToString()
+            {
+                return $"ID {id} - Amigo: {Amigo.Nome}, Revista: {Revista.Titulo}, Data Empréstimo: {DataEmprestimo.ToShortDateString()}, Situação: {Situacao}";
+            }
         }
-        public void Emprestar() { }
-        public void Devolver() { }
-        public void Reservar() { }
-
-        
     }
 }

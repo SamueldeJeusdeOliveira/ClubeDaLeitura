@@ -1,9 +1,10 @@
-﻿using System;
+﻿using ClubeDaLeitura.Compartilhado;
+using ClubeDaLeitura.ModuloRevistas;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ClubeDaLeitura.Compartilhado;
 
 namespace ClubeDaLeitura.ModuloCaixas
 {
@@ -11,37 +12,45 @@ namespace ClubeDaLeitura.ModuloCaixas
     {
         public string Etiqueta { get; set; }
         public string Cor { get; set; }
-        public int DiasDeEmprestimo { get; set; }
+        public int DiasEmprestimo { get; set; }
+        public List<Revista> Revistas { get; set; } = new List<Revista>();
 
-        public Caixa(string etiqueta, string cor, int diasDeEmprestimo)
+        public Caixa(string etiqueta, string cor, int diasEmprestimo)
         {
             Etiqueta = etiqueta;
             Cor = cor;
-            DiasDeEmprestimo = diasDeEmprestimo;
+            DiasEmprestimo = diasEmprestimo;
         }
 
-        public override void AtualizarRegistro(EntidadeBase registroAtualizado)
+        public string Validar()
         {
-            Caixa caixa = (Caixa)registroAtualizado;
-            this.Etiqueta = caixa.Etiqueta;
-            this.Cor = caixa.Cor;
-            this.DiasDeEmprestimo = caixa.DiasDeEmprestimo;
+            string resultadoValidacao = "";
+
+            if (string.IsNullOrEmpty(Etiqueta))
+                resultadoValidacao += "A etiqueta da caixa é obrigatória.\n";
+
+            if (string.IsNullOrEmpty(Cor))
+                resultadoValidacao += "A cor da caixa é obrigatória.\n";
+
+            if (DiasEmprestimo <= 0)
+                resultadoValidacao += "Os dias de empréstimo devem ser maiores que zero.\n";
+
+            return resultadoValidacao;
         }
 
-        public override string Validar()
+        public void AdicionarRevista(Revista revista)
         {
-            string erros = "";
+            Revistas.Add(revista);
+        }
 
-            if (string.IsNullOrWhiteSpace(Etiqueta))
-                erros += "Etiqueta é obrigatória!\n";
+        public void RemoverRevista(Revista revista)
+        {
+            Revistas.Remove(revista);
+        }
 
-            if (string.IsNullOrWhiteSpace(Cor))
-                erros += "Cor é obrigatória!\n";
-
-            if (DiasDeEmprestimo <= 0)
-                erros += "Dias de empréstimo devem ser maiores que zero!\n";
-
-            return erros;
+        public override string ToString()
+        {
+            return $"ID {id} - Etiqueta: {Etiqueta}, Cor: {Cor}, Dias empréstimo: {DiasEmprestimo}, Revistas: {Revistas.Count}";
         }
     }
 }

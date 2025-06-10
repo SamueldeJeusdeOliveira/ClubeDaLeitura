@@ -14,11 +14,6 @@ namespace ClubeDaLeitura.ModuloAmigos
         public string Nome { get; set; }
         public string Responsavel { get; set; }
         public string Telefone { get; set; }
-        public Revista revista { get; set; }
-        public void ObterEmprestimos() 
-        {
-            
-        }
 
         public Amigo(string nome, string responsavel, string telefone)
         {
@@ -27,36 +22,25 @@ namespace ClubeDaLeitura.ModuloAmigos
             Telefone = telefone;
         }
 
-        public override void AtualizarRegistro(EntidadeBase registroAtualizado)
+        public string Validar()
         {
-            Amigo amigo = (Amigo)registroAtualizado;
-            this.Nome = amigo. Nome;
-            this.Telefone = amigo.Telefone;
-            this.Responsavel = amigo.Responsavel;
+            string resultadoValidacao = "";
+
+            if (string.IsNullOrEmpty(Nome))
+                resultadoValidacao += "O nome do amigo é obrigatório.\n";
+
+            if (string.IsNullOrEmpty(Responsavel))
+                resultadoValidacao += "O nome do responsável é obrigatório.\n";
+
+            if (string.IsNullOrEmpty(Telefone))
+                resultadoValidacao += "O telefone é obrigatório.\n";
+
+            return resultadoValidacao;
         }
 
-        public override string Validar()
+        public override string ToString()
         {
-            string erros = "";
-
-            if (string.IsNullOrWhiteSpace(Nome))
-                erros += "O nome é obrigatório!\n";
-
-            else if (Nome.Length <= 3)
-                erros += "O nome deve conter no mínimo 3 caractere!\n";
-
-            if (string.IsNullOrWhiteSpace(Responsavel))
-                erros += "O responsável é obrigatório!\n";
-            else if (Responsavel.Length <= 3)
-                erros += "O responsável deve conter no mínimo 3 caracteres!\n";
-            if (string.IsNullOrWhiteSpace(Telefone))
-                erros += "O telefone é obrigatório!\n";
-
-            else if (Telefone.Length < 9)
-                erros += "O telefone deve conter no mínimo 9 caracteres!\n";
-
-            return erros;
-
+            return $"ID {id} - Nome: {Nome}, Responsável: {Responsavel}, Telefone: {Telefone}";
         }
     }
 }
