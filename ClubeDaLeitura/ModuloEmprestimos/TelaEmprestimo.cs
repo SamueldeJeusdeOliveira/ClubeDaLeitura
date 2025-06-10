@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ClubeDaLeitura.Compartilhado;
+﻿using ClubeDaLeitura.Compartilhado;
 using ClubeDaLeitura.ModuloAmigos;
+using ClubeDaLeitura.ModuloEmprestimos;
 using ClubeDaLeitura.ModuloRevistas;
+using System;
+using System.Linq;
+using static ClubeDaLeitura.ModuloRevistas.Revista;
 
 namespace ClubeDaLeitura.ModuloEmprestimos
 {
@@ -15,173 +14,184 @@ namespace ClubeDaLeitura.ModuloEmprestimos
         private RepositorioAmigo repositorioAmigo;
         private RepositorioRevista repositorioRevista;
 
-        public TelaEmprestimo(string nomeEntidade, RepositorioBase repositorioEmprestimo,
-            RepositorioAmigo repositorioAmigo, RepositorioRevista repositorioRevista)
-            : base(nomeEntidade, repositorioEmprestimo)
+        public TelaEmprestimo(RepositorioEmprestimo repoEmprestimo,
+            RepositorioAmigo repoAmigo, RepositorioRevista repoRevista)
         {
-            this.repositorioEmprestimo = (RepositorioEmprestimo)repositorioEmprestimo;
-            this.repositorioAmigo = repositorioAmigo;
-            this.repositorioRevista = repositorioRevista;
+            repositorioEmprestimo = repoEmprestimo;
+            repositorioAmigo = repoAmigo;
+            repositorioRevista = repoRevista;
+            nomeEntidade = "Empréstimo";
+            sufixo = "s";
         }
 
-        public TelaEmprestimo(string nomeEntidade, RepositorioEmprestimo repositorioEmprestimo,
-                      RepositorioAmigo repositorioAmigo,
-                      RepositorioRevista repositorioRevista)
-    : base(nomeEntidade, repositorioEmprestimo)
+        public override void Inserir()
         {
-            this.repositorioEmprestimo = repositorioEmprestimo;
-            this.repositorioAmigo = repositorioAmigo;
-            this.repositorioRevista = repositorioRevista;
-        }
+            Console.WriteLine("Registrando novo empréstimo...");
 
+            VisualizarAmigos();
 
-        public void Inserir()
-        {
-            Console.Clear();
-            Console.WriteLine($"Cadastro de {nomeEntidade}");
+            Console.Write("Digite o ID do amigo: ");
+            int idAmigo = int.Parse(Console.ReadLine());
 
-            Emprestimo novoEmprestimo = (Emprestimo)ObterDados();
+            Amigo amigo = repositorioAmigo.SelecionarRegistroPorId(idAmigo) as Amigo;
 
-            string resultadoValidacao = novoEmprestimo.Validar();
-
-            if (resultadoValidacao != "")
+            if (amigo == null)
             {
-                Console.WriteLine("Não foi possível cadastrar o empréstimo devido aos seguintes erros:");
-                Console.WriteLine(resultadoValidacao);
-                Console.ReadLine();
+                Console.WriteLine("Amigo inválido.");
                 return;
             }
 
-            repositorioEmprestimo.CadastrarRegistro(novoEmprestimo);
+            // Verifica se amigo tem empréstimo ativo
+            if (repositorioEmprestimo.SelecionarTodos().Cast<Emprestimo>()
+                .Any(e => e.Amigo.id == idAmigo && e.Situacao == SituacaoEmprestimo.Aberto))
+            {
+                Console.WriteLine("Este amigo já possui um empréstimo ativo.");
+                return;
+            }
 
-            Console.WriteLine("Empréstimo cadastrado com sucesso!");
-            Console.ReadLine();
+            VisualizarRevistas();
+
+            Console.Write("Digite o ID da revista disponível: ");
+            int idRevista = int.Parse(Console.ReadLine());
+
+            Revista revista = repositorioRevista.SelecionarRegistroPorId(idRevista) as Revista;
+
+            if (revista == null || revista.Status != StatusRevista.Disponivel)
+            {
+                Console.WriteLine("Revista inválida ou indisponível.");
+                return;
+            }
+
+            Emprestimo emprestimo = new Emprestimo(amigo, revista);
+
+            string erros = emprestimo.Validar();
+
+            if (string.IsNullOrEmpty(erros))
+            {
+                repositorioEmprestimo.CadastrarRegistro(emprestimo);
+                revista.Emprestar();
+
+                Console.WriteLine("Empréstimo registrado com sucesso!");
+            }
+            else
+            {
+                Console.WriteLine("Erro(s) ao validar dados:");
+                Console.WriteLine(erros);
+            }
+        }
+
+        public override void Editar()
+        {
+            // Opcional, geralmente empréstimos não são editados, mas pode implementar caso queira.
+            Console.WriteLine("Editar não suportado para empréstimos.");
+        }
+
+        public override void Excluir()
+        {
+            VisualizarTodos();
+
+            Console.Write("Digite o ID do empréstimo que deseja excluir: ");
+            int id = int.Parse(Console.ReadLine());
+
+            Emprestimo emprestimo = repositorioEmprestimo.SelecionarRegistroPorId(id) as Emprestimo;
+
+            if (emprestimo == null)
+            {
+                Console.WriteLine("Empréstimo não encontrado.");
+                return;
+            }
+
+            if (emprestimo.Situacao == SituacaoEmprestimo.Aberto)
+            {
+                Console.WriteLine("Não é possível excluir um empréstimo aberto.");
+                return;
+            }
+
+            repositorioEmprestimo.ExcluirRegistro(id);
+
+            Console.WriteLine("Empréstimo excluído com sucesso!");
+        }
+
+        public override void VisualizarTodos()
+        {
+            var emprestimos = repositorioEmprestimo.SelecionarTodos().Cast<Emprestimo>().ToList();
+
+            if (emprestimos.Count == 0)
+            {
+                Console.WriteLine("Nenhum empréstimo registrado.");
+                return;
+            }
+
+            Console.WriteLine("Empréstimos registrados:");
+
+            foreach (var e in emprestimos)
+            {
+                Console.WriteLine($"ID: {e.id} | Amigo: {e.Amigo.Nome} | Revista: {e.Revista.Titulo} | Data empréstimo: {e.DataEmprestimo.ToShortDateString()} | Data devolução: {e.ObterDataDevolucao().ToShortDateString()} | Situação: {e.Situacao}");
+            }
+        }
+
+        public void VisualizarRevistas()
+        {
+            var revistasDisponiveis = repositorioRevista.SelecionarTodos().Cast<Revista>()
+                .Where(r => r.Status == StatusRevista.Disponivel).ToList();
+
+            if (revistasDisponiveis.Count == 0)
+            {
+                Console.WriteLine("Nenhuma revista disponível para empréstimo.");
+                return;
+            }
+
+            Console.WriteLine("Revistas disponíveis:");
+
+            foreach (var r in revistasDisponiveis)
+            {
+                Console.WriteLine($"ID: {r.id} | Título: {r.Titulo} | Edição: {r.NumeroEdicao} | Caixa: {r.Caixa.Etiqueta}");
+            }
+        }
+
+        public void VisualizarAmigos()
+        {
+            var amigos = repositorioAmigo.SelecionarTodos().Cast<Amigo>().ToList();
+
+            if (amigos.Count == 0)
+            {
+                Console.WriteLine("Nenhum amigo cadastrado.");
+                return;
+            }
+
+            Console.WriteLine("Amigos cadastrados:");
+
+            foreach (var a in amigos)
+            {
+                Console.WriteLine($"ID: {a.id} | Nome: {a.Nome} | Responsável: {a.Responsavel} | Telefone: {a.Telefone}");
+            }
         }
 
         public void RegistrarDevolucao()
         {
-            Console.Clear();
-            Console.WriteLine($"Registrar devolução de {nomeEntidade}");
-
             VisualizarTodos();
 
-            Console.Write("Digite o ID do empréstimo que deseja registrar a devolução: ");
+            Console.Write("Digite o ID do empréstimo para registrar devolução: ");
             int id = int.Parse(Console.ReadLine());
 
-            Emprestimo emprestimoSelecionado = (Emprestimo)repositorioEmprestimo.SelecionarRegistroPorId(id);
+            Emprestimo emprestimo = repositorioEmprestimo.SelecionarRegistroPorId(id) as Emprestimo;
 
-            if (emprestimoSelecionado == null)
+            if (emprestimo == null)
             {
-                Console.WriteLine("ID inválido.");
-                Console.ReadLine();
+                Console.WriteLine("Empréstimo não encontrado.");
                 return;
             }
 
-            if (emprestimoSelecionado.EstaDevolvido())
+            if (emprestimo.Situacao != SituacaoEmprestimo.Aberto)
             {
-                Console.WriteLine("Este empréstimo já foi devolvido.");
-                Console.ReadLine();
+                Console.WriteLine("Empréstimo já está fechado.");
                 return;
             }
 
-            emprestimoSelecionado.RegistrarDevolucao();
+            emprestimo.RegistrarDevolucao();
+            emprestimo.Revista.Devolver();
 
             Console.WriteLine("Devolução registrada com sucesso!");
-            Console.ReadLine();
-        }
-
-        public void VisualizarTodos()
-        {
-            VisualizarRegistros(false);
-        }
-
-        public override void VisualizarRegistros(bool exibirCabecalho)
-        {
-            if (exibirCabecalho == true)
-                ExibirCabecalho();
-            Console.WriteLine("Visualização de Amigos");
-
-            Console.WriteLine();
-
-            Console.WriteLine(
-                "{0, -10} | {1, -20} | {2, -30} | {3, -15}",
-                "Id", "Amigo", "Data do Empréstimo", "Data de Devolução"
-            );
-
-            EntidadeBase[] emprestimo = repositorioEmprestimo.SelecionarRegistros();
-
-            for (int i = 0; i < emprestimo.Length; i++)
-            {
-                if (emprestimo[i] == null)
-                    continue;
-
-                Emprestimo a = (Emprestimo)emprestimo[i];
-
-                Console.WriteLine(
-                   "{0, -10} | {1, -20} | {2, -30} | {3, -15}",
-                    a.id, a.Amigo, a.DataEmprestimo, a.DataDevolucao
-                );
-            }
-
-            Console.ReadLine();
-        }
-
-
-        protected override EntidadeBase ObterDados()
-        {
-            Console.WriteLine("Selecione um amigo pelo ID:");
-            ExibirAmigos();
-            Console.Write("ID do amigo: ");
-            int idAmigo = int.Parse(Console.ReadLine());
-
-            Amigo amigoSelecionado = (Amigo)repositorioAmigo.SelecionarRegistroPorId(idAmigo);
-
-            if (amigoSelecionado == null)
-            {
-                Console.WriteLine("Amigo não encontrado.");
-                return null;
-            }
-
-            Console.WriteLine("Selecione uma revista pelo ID:");
-            ExibirRevistas();
-            Console.Write("ID da revista: ");
-            int idRevista = int.Parse(Console.ReadLine());
-
-            Revista revistaSelecionada = (Revista)repositorioRevista.SelecionarRegistroPorId(idRevista);
-
-            if (revistaSelecionada == null)
-            {
-                Console.WriteLine("Revista não encontrada.");
-                return null;
-            }
-
-            return new Emprestimo(amigoSelecionado, revistaSelecionada);
-        }
-
-        private void ExibirAmigos()
-        {
-            EntidadeBase[] amigos = repositorioAmigo.SelecionarRegistros();
-
-            foreach (var registro in amigos)
-            {
-                if (registro == null) continue;
-
-                Amigo a = (Amigo)registro;
-                Console.WriteLine($"{a.id} - {a.Nome}");
-            }
-        }
-
-        private void ExibirRevistas()
-        {
-            EntidadeBase[] revistas = repositorioRevista.SelecionarRegistros();
-
-            foreach (var registro in revistas)
-            {
-                if (registro == null) continue;
-
-                Revista r = (Revista)registro;
-                Console.WriteLine($"{r.id} - {r.Titulo}");
-            }
         }
     }
 }

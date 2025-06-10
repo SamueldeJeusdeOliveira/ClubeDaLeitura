@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClubeDaLeitura.Compartilhado
 {
@@ -21,17 +17,17 @@ namespace ClubeDaLeitura.Compartilhado
         {
             ExibirCabecalho();
             Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------------------------");
-            Console.WriteLine($"|  1 - Cadastro de {nomeEntidade}   |     2 - Visualizar {nomeEntidade}s    |     3 - Editar {nomeEntidade}    |  4 - Excluir {nomeEntidade}        ");
+            Console.WriteLine($"|  1 - Cadastrar {nomeEntidade}   |   2 - Visualizar {nomeEntidade}s    |   3 - Editar {nomeEntidade}    |   4 - Excluir {nomeEntidade}       ");
             Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------------------------");
-            Console.WriteLine($"\n                                              Pressionar a tecla 'Esc' para sair                                                                           ");
+            Console.WriteLine($"\n                                              Pressione 'Esc' para sair                                                                           ");
 
             Console.WriteLine();
 
             Console.Write("Digite uma opção válida: ");
             ConsoleKeyInfo tecla = Console.ReadKey();
-            char opcaoEscolhida = tecla.KeyChar;
+            Console.WriteLine();
 
-            return opcaoEscolhida;
+            return tecla.KeyChar;
         }
 
         public void CadastrarRegistro()
@@ -45,17 +41,18 @@ namespace ClubeDaLeitura.Compartilhado
 
             EntidadeBase novoRegistro = ObterDados();
 
+            if (novoRegistro == null)
+                return;
+
             string erros = novoRegistro.Validar();
 
-            if (erros.Length > 0)
+            if (!string.IsNullOrEmpty(erros))
             {
-                Console.WriteLine();
-
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(erros);
+                Console.WriteLine("\nErros encontrados:\n" + erros);
                 Console.ResetColor();
 
-                Console.Write("\nDigite ENTER para continuar...");
+                Console.Write("\nPressione ENTER para tentar novamente...");
                 Console.ReadLine();
 
                 CadastrarRegistro();
@@ -65,7 +62,11 @@ namespace ClubeDaLeitura.Compartilhado
 
             repositorio.CadastrarRegistro(novoRegistro);
 
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"\n{nomeEntidade} cadastrado com sucesso!");
+            Console.ResetColor();
+
+            Console.WriteLine("\nPressione ENTER para continuar...");
             Console.ReadLine();
         }
 
@@ -79,16 +80,28 @@ namespace ClubeDaLeitura.Compartilhado
 
             VisualizarRegistros(false);
 
-            Console.Write("Digite o id do registro que deseja selecionar: ");
-            int idSelecionado = Convert.ToInt32(Console.ReadLine());
+            Console.Write($"\nDigite o id do {nomeEntidade} que deseja editar: ");
+            if (!int.TryParse(Console.ReadLine(), out int idSelecionado))
+            {
+                Console.WriteLine("ID inválido.");
+                Console.ReadLine();
+                return;
+            }
 
             Console.WriteLine();
 
             EntidadeBase registroAtualizado = ObterDados();
 
+            if (registroAtualizado == null)
+                return;
+
             repositorio.EditarRegistro(idSelecionado, registroAtualizado);
 
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"\n{nomeEntidade} editado com sucesso!");
+            Console.ResetColor();
+
+            Console.WriteLine("\nPressione ENTER para continuar...");
             Console.ReadLine();
         }
 
@@ -102,14 +115,21 @@ namespace ClubeDaLeitura.Compartilhado
 
             VisualizarRegistros(false);
 
-            Console.Write("Digite o id do registro que deseja selecionar: ");
-            int idSelecionado = Convert.ToInt32(Console.ReadLine());
-
-            Console.WriteLine();
+            Console.Write($"\nDigite o id do {nomeEntidade} que deseja excluir: ");
+            if (!int.TryParse(Console.ReadLine(), out int idSelecionado))
+            {
+                Console.WriteLine("ID inválido.");
+                Console.ReadLine();
+                return;
+            }
 
             repositorio.ExcluirRegistro(idSelecionado);
 
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"\n{nomeEntidade} excluído com sucesso!");
+            Console.ResetColor();
+
+            Console.WriteLine("\nPressione ENTER para continuar...");
             Console.ReadLine();
         }
 

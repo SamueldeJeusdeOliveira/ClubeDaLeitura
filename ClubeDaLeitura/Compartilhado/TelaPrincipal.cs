@@ -14,65 +14,60 @@ namespace ClubeDaLeitura.Compartilhado
 {
     public class TelaPrincipal
     {
-        private char opcaoEscolhida;
-
-        private RepositorioAmigo repositorioAmigo;
-        private RepositorioCaixa repositorioCaixa;
-        private RepositorioEmprestimo repositorioEmprestimo;
-        private RepositorioRevista repositorioRevista;
-
         private TelaAmigo telaAmigo;
         private TelaCaixa telaCaixa;
-        private TelaEmprestimo telaEmprestimo;
         private TelaRevista telaRevista;
+        private TelaEmprestimo telaEmprestimo;
 
         public TelaPrincipal()
         {
-            repositorioAmigo = new RepositorioAmigo();
-            repositorioCaixa = new RepositorioCaixa();
-            repositorioEmprestimo = new RepositorioEmprestimo();
-            repositorioRevista = new RepositorioRevista();
+            // Instanciar os repositórios
+            RepositorioAmigo repositorioAmigo = new RepositorioAmigo();
+            RepositorioCaixa repositorioCaixa = new RepositorioCaixa();
+            RepositorioRevista repositorioRevista = new RepositorioRevista();
+            RepositorioEmprestimo repositorioEmprestimo = new RepositorioEmprestimo();
 
-            telaAmigo = new TelaAmigo(repositorioAmigo);
-            telaCaixa = new TelaCaixa("Caixa", repositorioCaixa);
-            telaEmprestimo = new TelaEmprestimo("Empréstimo", repositorioEmprestimo, repositorioAmigo, repositorioRevista);
-            telaRevista = new TelaRevista("Revista", repositorioRevista, repositorioCaixa, repositorioAmigo);
+            // Instanciar as telas, passando os repositórios conforme necessário
+            telaAmigo = new TelaAmigo(repositorioAmigo, repositorioEmprestimo);
+            telaCaixa = new TelaCaixa(repositorioCaixa, repositorioRevista);
+            telaRevista = new TelaRevista(repositorioRevista, repositorioCaixa);
+            telaEmprestimo = new TelaEmprestimo(repositorioEmprestimo, repositorioAmigo, repositorioRevista);
         }
 
         public void ApresentarMenuPrincipal()
         {
             Console.Clear();
-
-            Console.WriteLine("                            .-. .-')   ('-.         _ .-') _                                          (`-.  _  .-')              \r\n                            \\  ( OO )_(  OO)       ( (  OO) )                                       _(OO  )( \\( -O )             \r\n   .-----.,--.    ,--. ,--.  ;-----.(,------.       \\     .'_ .-'),-----.        ,--.     ,-.-'),--(_/   ,. ,------. .-'),-----. \r\n  '  .--./|  |.-')|  | |  |  | .-.  ||  .---'       ,`'--..._( OO'  .-.  '       |  |.-') |  |OO\\   \\   /(__|   /`. ( OO'  .-.  '\r\n  |  |('-.|  | OO |  | | .-')| '-' /_|  |           |  |  \\  /   |  | |  |       |  | OO )|  |  \\\\   \\ /   /|  /  | /   |  | |  |\r\n /_) |OO  |  |`-' |  |_|( OO | .-. `(|  '--.        |  |   ' \\_) |  |\\|  |       |  |`-' ||  |(_/ \\   '   /,|  |_.' \\_) |  |\\|  |\r\n ||  |`-'(|  '---.|  | | `-' | |  \\  |  .--'        |  |   / : \\ |  | |  |      (|  '---.,|  |_.'  \\     /__|  .  '.' \\ |  | |  |\r\n(_'  '--'\\|      ('  '-'(_.-'| '--'  |  `---.       |  '--'  /  `'  '-'  '       |      (_|  |      \\   /   |  |\\  \\   `'  '-'  '\r\n   `-----'`------' `-----'   `------'`------'       `-------'     `-----'        `------' `--'       `-'    `--' '--'    `-----' ");
-
-            Console.WriteLine();
-            Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------------------------");
-            Console.WriteLine("|  1 - Controle de Amigos    |   2 - Controle de Revistas     |    3 - Controle de Emprestimos    |        4 - Controle de Caixa        |");
-            Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------------------------");
-            Console.WriteLine("\n                                              Pressionar a tecla 'Esc' para sair                                                                           ");
-
-            Console.WriteLine();
-
-            Console.Write("Escolha uma das opções: ");
-            ConsoleKeyInfo tecla = Console.ReadKey();
-            opcaoEscolhida = tecla.KeyChar;
+            Console.WriteLine("=== Clube da Leitura ===");
+            Console.WriteLine("1 - Módulo Amigos");
+            Console.WriteLine("2 - Módulo Caixas");
+            Console.WriteLine("3 - Módulo Revistas");
+            Console.WriteLine("4 - Módulo Empréstimos");
+            Console.WriteLine("S - Sair");
+            Console.Write("Escolha uma opção: ");
         }
 
         public TelaBase ObterTela()
         {
-            if (opcaoEscolhida == '1')
-                return telaAmigo;
+            char opcao = Char.ToUpper(Console.ReadKey().KeyChar);
+            Console.WriteLine();
 
-            else if (opcaoEscolhida == '2')
-                return telaRevista;
-
-            else if (opcaoEscolhida == '3')
-                return telaEmprestimo;
-
-            else if (opcaoEscolhida == '4')
-                return telaCaixa;
-
-            return null;
+            switch (opcao)
+            {
+                case '1':
+                    return telaAmigo;
+                case '2':
+                    return telaCaixa;
+                case '3':
+                    return telaRevista;
+                case '4':
+                    return telaEmprestimo;
+                case 'S':
+                    return null;
+                default:
+                    Console.WriteLine("Opção inválida. Pressione Enter para tentar novamente.");
+                    Console.ReadLine();
+                    return ObterTela();
+            }
         }
     }
 }

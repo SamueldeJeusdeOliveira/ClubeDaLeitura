@@ -1,72 +1,132 @@
-﻿using System;
+﻿using ClubeDaLeitura.Compartilhado;
+using ClubeDaLeitura.ModuloEmprestimos;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ClubeDaLeitura.Compartilhado;
+using static ClubeDaLeitura.ModuloRevistas.Revista;
 
 namespace ClubeDaLeitura.ModuloAmigos
 {
     internal class TelaAmigo : TelaBase
     {
-        RepositorioAmigo repositorioAmigo;
+        private RepositorioAmigo repositorioAmigo;
 
-        public TelaAmigo(RepositorioBase repositorio) : base("Amigo", repositorio)
+        public TelaAmigo(RepositorioAmigo repo) : base("Amigo", repo)
         {
-            this.repositorioAmigo = repositorioAmigo;
+            repositorioAmigo = repo;
         }
-        public TelaAmigo(RepositorioAmigo repositorioAmigo)
-        : base("Amigo", repositorioAmigo)
+
+        public override void Inserir()
         {
-            this.repositorioAmigo = repositorioAmigo;
+            Console.WriteLine("Inserindo novo amigo...");
+
+            Console.Write("Nome: ");
+            string nome = Console.ReadLine();
+
+            Console.Write("Responsável: ");
+            string responsavel = Console.ReadLine();
+
+            Console.Write("Telefone: ");
+            string telefone = Console.ReadLine();
+
+            Amigo amigo = new Amigo(nome, responsavel, telefone);
+
+            string erros = amigo.Validar();
+
+            if (string.IsNullOrEmpty(erros))
+            {
+                repositorioAmigo.CadastrarRegistro(amigo);
+                Console.WriteLine("Amigo cadastrado com sucesso!");
+            }
+            else
+            {
+                Console.WriteLine("Erro(s) na validação:");
+                Console.WriteLine(erros);
+            }
         }
-        
-        public void VisualizarEmprestimos(bool exibirCabecalho) 
+
+        public override void Editar()
         {
-            if (!exibirCabecalho) { ExibirCabecalho(); }
+            VisualizarRegistros(true);
+
+            Console.Write("Digite o ID do amigo que deseja editar: ");
+            int id = int.Parse(Console.ReadLine());
+
+            Amigo amigo = repositorioAmigo.SelecionarRegistroPorId(id) as Amigo;
+
+            if (amigo == null)
+            {
+                Console.WriteLine("Amigo não encontrado.");
+                return;
+            }
+
+            Console.Write("Novo nome: ");
+            string nome = Console.ReadLine();
+
+            Console.Write("Novo responsável: ");
+            string responsavel = Console.ReadLine();
+
+            Console.Write("Novo telefone: ");
+            string telefone = Console.ReadLine();
+
+            Amigo amigoAtualizado = new Amigo(nome, responsavel, telefone);
+
+            string erros = amigoAtualizado.Validar();
+
+            if (string.IsNullOrEmpty(erros))
+            {
+                repositorioAmigo.EditarRegistro(id, amigoAtualizado);
+                Console.WriteLine("Amigo atualizado com sucesso!");
+            }
+            else
+            {
+                Console.WriteLine("Erro(s) na validação:");
+                Console.WriteLine(erros);
+            }
+        }
+
+        public override void Excluir()
+        {
+            VisualizarRegistros(true);
+
+            Console.Write("Digite o ID do amigo que deseja excluir: ");
+            int id = int.Parse(Console.ReadLine());
+
+            Amigo amigo = repositorioAmigo.SelecionarRegistroPorId(id) as Amigo;
+
+            if (amigo == null)
+            {
+                Console.WriteLine("Amigo não encontrado.");
+                return;
+            }
+
+            repositorioAmigo.ExcluirRegistro(id);
+
+            Console.WriteLine("Amigo excluído com sucesso!");
         }
 
         public override void VisualizarRegistros(bool exibirCabecalho)
         {
-            if (exibirCabecalho == true)
-                ExibirCabecalho();
-            Console.WriteLine("Visualização de Amigos");
+            var amigos = repositorioAmigo.SelecionarTodos().Cast<Amigo>().ToList();
 
-            Console.WriteLine();
-
-            Console.WriteLine(
-                "{0, -10} | {1, -20} | {2, -30} | {3, -15}",
-                "Id", "Nome", "Responsavel", "Telefone"
-            );
-
-            EntidadeBase[] amigo = repositorioAmigo.SelecionarRegistros();
-
-            for (int i = 0; i < amigo.Length; i++)
-            { 
-                if (amigo[i] == null)
-                    continue;
-
-                Amigo a = (Amigo)amigo[i];
-
-                Console.WriteLine(
-                   "{0, -10} | {1, -20} | {2, -30} | {3, -15}",
-                    a.id, a.Nome, a.Responsavel, a.Telefone
-                );
+            if (amigos.Count == 0)
+            {
+                Console.WriteLine("Nenhum amigo cadastrado.");
+                return;
             }
 
-            Console.ReadLine();
-        }
+            if (exibirCabecalho)
+                ExibirCabecalho();
 
-        protected override Amigo ObterDados()
-        {
-            Console.Write("Qual o nome do amigo? ");
-            string nome = Console.ReadLine();
-            Console.Write("Qual o nome do Responsável dele? ");
-            string responsavel = Console.ReadLine();
-            Console.Write("Qual o telefone para contato?(Escreva no formato (xx) xxxx-xxxx) ");
-            string telefone = Console.ReadLine();
-            Amigo amigos = new Amigo(nome, responsavel, telefone);
-            return amigos;
+            Console.WriteLine("Amigos cadastrados:");
+
+            foreach (var amigo in amigos)
+            {
+                Console.WriteLine($"ID: {amigo.id} | Nome: {amigo.Nome} | Responsável: {amigo.Responsavel} | Telefone: {amigo.Telefone}");
+            }
         }
     }
 }

@@ -15,5 +15,7 @@ namespace ClubeDaLeitura.Compartilhado
         {
             id = ++contador;
         }
+        public abstract string Validar();
+
     }
 }
