@@ -8,9 +8,12 @@ namespace ClubeDaLeitura.Compartilhado
 {
     public abstract class EntidadeBase
     {
-        public int id;
+        private static int contador = 0;
+        public int id { get; private set; }
 
-        public abstract void AtualizarRegistro(EntidadeBase registroAtualizado);
-        public abstract string Validar();
+        public EntidadeBase()
+        {
+            id = ++contador;
+        }
     }
 }
